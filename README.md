@@ -17,16 +17,16 @@ Create a [composite action] that uses this action:
 inputs:
   action_ref:
     default: ${{ github.action_ref }}
-	action_repo:
-		default: ${{ github.action_repository}}
+  action_repo:
+    default: ${{ github.action_repository}}
 
 runs:
-	using: composite
-	steps:
-		- uses: rgst-io/action-go-shim@v0
-			with:
-				action_ref: ${{ inputs.action_ref }}
-				action_repo: ${{ inputs.action_repo }}
+  using: composite
+  steps:
+    - uses: rgst-io/action-go-shim@v0
+      with:
+        action_ref: ${{ inputs.action_ref }}
+        action_repo: ${{ inputs.action_repo }}
 ```
 
 ## How it Works
