@@ -1,0 +1,26 @@
+module github.com/rgst-io/action-gh-rel-shim
+
+go 1.25
+
+require (
+	github.com/blang/semver/v4 v4.0.0
+	github.com/jaredallard/cmdexec v1.3.0
+	github.com/jaredallard/vcs v1.0.1
+)
+
+require (
+	github.com/chainguard-dev/git-urls v1.0.2 // indirect
+	github.com/google/go-github/v80 v80.0.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
+	github.com/jamespfennell/xz v0.1.2 // indirect
+	github.com/jaredallard/archives v1.0.1 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/ulikunitz/xz v0.5.12 // indirect
+	gitlab.com/gitlab-org/api/client-go v1.7.0 // indirect
+	golang.org/x/exp v0.0.0-20250813145105-42675adae3e6 // indirect
+	golang.org/x/oauth2 v0.33.0 // indirect
+	golang.org/x/time v0.14.0 // indirect
+)
