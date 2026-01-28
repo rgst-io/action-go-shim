@@ -17,6 +17,25 @@ inputs:
       When running in a composite action, the repo (before '@') value
       for the action we're acting as a shim for.
 
+  validate_attestations:
+    description: >
+      When enabled, validate that the downloaded binary has a valid
+      Github attestation.
+    default: "true"
+
+  pattern:
+    description: >
+      Binary download pattern to use, supports Go Templates, with the
+      following variables available:
+      - {{ .GithubActionRepository }}
+      - {{ .GithubActionRef }}
+      - {{ .RepoName }}
+      - {{ .Tag }}
+      - {{ .Ext }} (platform specific extension, empty if none)
+      - {{ .GOOS }}
+      - {{ .GOARCH }}
+    default: "{{ .REPO_NAME }}-{{ .GOOS }}-{{ .GOARCH }}{{ .Ext }}"
+
 runs:
   using: node24
   main: shim.js
