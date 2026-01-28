@@ -20,6 +20,7 @@ fi
 
 # Ensure we're on the main branch
 current_branch=$(git rev-parse --abbrev-ref HEAD)
+current_commit=$(git rev-parse HEAD)
 if [[ "$current_branch" != "main" ]]; then
 	echo "Error: Must be on main branch to release (currently on $current_branch)" >&2
 	exit 1
@@ -52,6 +53,7 @@ tmpDir=$(mktemp -d)
 
 cp -v "$REPO_ROOT/shim/shim.js" "$tmpDir"
 cp -v "$REPO_ROOT/action.yml" "$tmpDir"
+echo "$current_commit" >"$REPO_ROOT/COMMIT"
 
 # Copy over each artifact's files in a predictable naming scheme for the
 # shim to execute.
@@ -62,10 +64,6 @@ for artifact in "${artifacts[@]}"; do
 
 	cp -v "$REPO_ROOT/$path" "$tmpDir/$output"
 done
-
-rm -rf "$REPO_ROOT/dist"
-mv "$tmpDir" "$REPO_ROOT/dist"
-
 
 pushd "$tmpDir" >/dev/null
 git init
@@ -89,6 +87,8 @@ for tag in "${tags[@]}"; do
 
 	git push origin "${extra_args[@]}" "refs/tags/$tag"
 done
+
+gh release create --notes-from-tag "$patch_tag" ./*
 popd >/dev/null
 
 echo "Cleaning up temporary repository"
