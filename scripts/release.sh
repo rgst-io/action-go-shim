@@ -53,7 +53,7 @@ tmpDir=$(mktemp -d)
 
 cp -v "$REPO_ROOT/shim/shim.js" "$tmpDir"
 cp -v "$REPO_ROOT/action.yml" "$tmpDir"
-echo "$current_commit" >"$REPO_ROOT/COMMIT"
+echo "$current_commit" >"$tmpDir/COMMIT"
 
 # Copy over each artifact's files in a predictable naming scheme for the
 # shim to execute.
