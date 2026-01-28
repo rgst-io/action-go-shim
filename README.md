@@ -9,16 +9,22 @@ Actions. Specifically designed for Golang actions.
 
 ## Usage
 
-Create a [composite action] that uses this action:
+There are two methods of using this action.
+
+### Composite Actions
+
+Create a [composite action]:
 
 ```yaml
 # Due to a bug in Github Actions, you must set these inputs.
 # See: https://github.com/actions/runner/issues/2473
 inputs:
   action_ref:
+    description: "[INTERNAL USAGE ONLY] `github.action_ref`"
     default: ${{ github.action_ref }}
   action_repo:
-    default: ${{ github.action_repository}}
+    description: "[INTERNAL USAGE ONLY] `github.action_repository`"
+    default: ${{ github.action_repository }}
 
 runs:
   using: composite
@@ -27,6 +33,28 @@ runs:
       with:
         action_ref: ${{ inputs.action_ref }}
         action_repo: ${{ inputs.action_repo }}
+```
+
+### Binary
+
+You can ship this action in Git with your action. This action shouldn't
+change a lot, so it should be a minor amount of space used. Example:
+
+1. Download **entire** release contents into `<repo root>/shim`.
+2. Create an action consuming it
+
+```yml
+inputs:
+  action_ref:
+    description: "[INTERNAL USAGE ONLY] `github.action_ref`"
+    default: ${{ github.action_ref }}
+  action_repo:
+    description: "[INTERNAL USAGE ONLY] `github.action_repository`"
+    default: ${{ github.action_repository }}
+
+runs:
+  using: node24
+  main: shim/shim.js
 ```
 
 ## How it Works

@@ -16,6 +16,7 @@ import (
 	"github.com/jaredallard/cmdexec"
 	"github.com/jaredallard/vcs/git"
 	"github.com/jaredallard/vcs/releases"
+	"github.com/sethvargo/go-githubactions"
 )
 
 // ghServerURL is the base for Github.
@@ -131,15 +132,15 @@ func downloadBinary(ctx context.Context, repo, tagName string) (string, error) {
 }
 
 func entrypoint(ctx context.Context) error {
-	repo := os.Getenv("GITHUB_ACTION_REPOSITORY")
-	ref := os.Getenv("GITHUB_ACTION_REF")
+	repo := githubactions.GetInput("action_repo")
+	ref := githubactions.GetInput("action_ref")
 
 	if repo == "" {
-		return fmt.Errorf("env var GITHUB_ACTION_REPOSITORY not set")
+		return fmt.Errorf("input GITHUB_ACTION_REPOSITORY not set")
 	}
 
 	if ref == "" {
-		return fmt.Errorf("env var GITHUB_ACTION_REF not set")
+		return fmt.Errorf("input GITHUB_ACTION_REF not set")
 	}
 
 	tagName, err := getTagFromRev(ctx, repo, ref)
@@ -167,9 +168,8 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Kill, os.Interrupt)
 	defer cancel()
 
-	err := entrypoint(ctx)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "[action-go-shim] Error: %v\n", err)
+	if err := entrypoint(ctx); err != nil {
+		githubactions.Errorf("[actions-go-shim] Error: %v", err.Error())
 		exitCode = 1
 	}
 }

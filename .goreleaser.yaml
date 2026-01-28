@@ -1,22 +1,17 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 version: 2
-project_name: stencil
+project_name: action-go-shim
 report_sizes: true
 metadata:
   mod_timestamp: "{{ .CommitTimestamp }}"
 builds:
-  - main: ./cmd/stencil
+  - main: ./cmd/shim
     flags:
       - -trimpath
     ldflags:
       - -s
       - -w
       ## <<Stencil::Block(stencilLdflags)>>
-      - -X go.rgst.io/stencil/v2/internal/version.version={{.Version}}
-      - -X go.rgst.io/stencil/v2/internal/version.commit={{.Commit}}
-      - -X go.rgst.io/stencil/v2/internal/version.date={{ .CommitDate }}
-      - -X go.rgst.io/stencil/v2/internal/version.builtBy=goreleaser
-      - -X go.rgst.io/stencil/v2/internal/version.treeState={{ if .IsGitDirty }}dirty{{ else }}clean{{ end }}
       ## <</Stencil::Block>>
     env:
       - CGO_ENABLED=0
@@ -45,56 +40,13 @@ snapshot:
   version_template: "{{ incpatch .Version }}-next"
 changelog:
   use: git
-release:
-  prerelease: "auto"
-  footer: |-
-    **Full Changelog**: https://github.com/rgst-io/stencil/compare/{{ .PreviousTag }}...{{ .Tag }}
 
 ## <<Stencil::Block(extraReleaseOpts)>>
-# ---------- Packaging
-notarize:
-  macos:
-    - enabled: '{{ isEnvSet "MACOS_SIGN_P12" }}'
-      sign:
-        certificate: "{{.Env.MACOS_SIGN_P12}}"
-        password: "{{.Env.MACOS_SIGN_PASSWORD}}"
-      notarize:
-        issuer_id: "{{.Env.MACOS_NOTARY_ISSUER_ID}}"
-        key_id: "{{.Env.MACOS_NOTARY_KEY_ID}}"
-        key: "{{.Env.MACOS_NOTARY_KEY}}"
+upx:
+  - enabled: true
+    compress: "9"
+    lzma: true
 
-nfpms:
-  - id: packages
-    homepage: https://stencil.rgst.io
-    description: |-
-      A modern living-template engine for evolving repositories.
-    maintainer: Jared Allard <jared@rgst.io>
-    license: Apache-2.0
-    vendor: rgst
-    bindir: /usr/bin
-    section: utils
-    contents:
-      - src: ./LICENSE
-        dst: /usr/share/doc/stencil/copyright
-        file_info:
-          mode: 0644
-    formats:
-      - apk
-      - deb
-      - rpm
-    dependencies:
-      - git
-    deb:
-      lintian_overrides:
-        - statically-linked-binary
-        - changelog-file-missing-in-native-package
-
-publishers:
-  - name: fury.io
-    ids:
-      - packages
-    env:
-      - "FURY_PUSH_TOKEN={{ .Env.FURY_PUSH_TOKEN }}"
-    cmd: ./.github/scripts/fury-upload.sh {{ .ArtifactName }}
-    disable: '{{ if (isEnvSet "FURY_PUSH_TOKEN") }}false{{ else }}true{{ end }}'
+archives:
+  - formats: binary
 ## <</Stencil::Block>>
