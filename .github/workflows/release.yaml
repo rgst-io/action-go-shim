@@ -29,9 +29,9 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+      - uses: jdx/mise-action@v3
       - name: Setup syft
         run: mise use -g syft@latest
-      - uses: jdx/mise-action@v3
       - name: Get Go directories
         id: go
         run: |
