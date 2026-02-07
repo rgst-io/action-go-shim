@@ -6,11 +6,9 @@ package main
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"os/signal"
 	"path/filepath"
 	"runtime"
@@ -188,19 +186,19 @@ func downloadBinary(ctx context.Context, cfg *Config, tag string) (string, error
 	}
 
 	if cfg.ValidateAttestations != nil && *cfg.ValidateAttestations {
-		cmd := cmdexec.Command("gh", "attestation", "verify", "--repo", cfg.GithubActionRepository, dlPath)
+		log("Validating binary's attestation...")
+		cmd := cmdexec.Command("gh", "attestation", "verify", dlPath, "--repo", cfg.GithubActionRepository)
 		cmd.SetEnviron([]string{"GH_TOKEN=" + cfg.GithubToken})
-		out, err := cmd.Output()
+		out, err := cmd.CombinedOutput()
 		if err != nil {
-			var execErr *exec.ExitError
-			if errors.As(err, &execErr) {
-				return "", fmt.Errorf("attestation validation failed %q: %w", string(execErr.Stderr), err)
-			}
-
-			return "", fmt.Errorf("attestation validation failed (no stderr): %w", err)
+			return "", fmt.Errorf("attestation validation failed %q: %w", string(out), err)
 		}
 
-		os.Stdout.Write(out) //nolint:errcheck // Why: Best effort
+		if len(out) != 0 {
+			os.Stdout.Write(out) //nolint:errcheck // Why: Best effort
+		}
+
+		log("Attestation validation succeeded")
 	}
 
 	return dlPath, nil

@@ -35,7 +35,7 @@ type Config struct {
 
 	// ValidateAttestations enables validating downloaded assets with
 	// Github's attestations. Requires the Github CLI to be available.
-	ValidateAttestations *bool `githubActions:"validate_attestations" githubActionsDefault:"true" env:"ACTION_GO_SHIM_VALIDATE_ATTESTATIONS"`
+	ValidateAttestations *bool `githubActions:"validate_attestations" githubActionsDefault:"true" env:"ACTION_GO_SHIM_VALIDATE_ATTESTATIONS" yaml:"validate_attestations"`
 }
 
 // parseShimConfig attempts to parse a shim config in the current
