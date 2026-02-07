@@ -46,7 +46,9 @@ jobs:
           path: ${{ steps.go.outputs.mod_cache_dir }}
           key: ${{ github.workflow }}-${{ runner.os }}-go-mod-cache-${{ hashFiles('**/go.sum') }}
       - name: Set up git user
-        uses: fregante/setup-git-user@v2
+        run: |-
+          git config --global user.name github-actions[bot]
+          git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
       - name: Create release
         env:
           VERSION: ${{ inputs.version }}
