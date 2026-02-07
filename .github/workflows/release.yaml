@@ -56,7 +56,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |-
           ./scripts/release.sh "$VERSION"
-          git fetch origin --tags
+          git fetch origin --force --tags
           git checkout "origin/refs/tags/$VERSION"
       - uses: actions/attest-build-provenance@v3
         with:
