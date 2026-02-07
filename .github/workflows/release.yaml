@@ -53,6 +53,7 @@ jobs:
       - name: Create release
         env:
           VERSION: ${{ inputs.version }}
+          GH_TOKEN: ${{ github.token }}
         run: |-
           ./scripts/release.sh "$VERSION"
           git fetch origin --tags
