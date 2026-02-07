@@ -10,12 +10,12 @@ NEW_VERSION="${1:-}"
 
 # show_usage prints out the usage information for this script.
 show_usage() {
-  echo "scripts/release.sh <version>"
+	echo "scripts/release.sh <version>"
 }
 
 if [[ -z "$NEW_VERSION" ]]; then
-  show_usage >&2
-  exit 1
+	show_usage >&2
+	exit 1
 fi
 
 # Ensure we're on the main branch

@@ -9,7 +9,19 @@ Actions. Specifically designed for Golang actions.
 
 ## Usage
 
-There are two methods of using this action.
+There are three methods of using this action.
+
+### Pass-through
+
+**Caveats**: Does not support inputs.
+
+```yaml
+steps:
+- uses: rgst-io/action-go-shim@v0
+  with:
+    action_ref: <version>
+    action_repo: your-org/your-repo
+```
 
 ### Composite Actions
 
@@ -25,6 +37,9 @@ inputs:
   action_repo:
     description: "[INTERNAL USAGE ONLY] `github.action_repository`"
     default: ${{ github.action_repository }}
+
+  # Your action's inputs go here
+  # ...
 
 runs:
   using: composite
@@ -45,17 +60,39 @@ change a lot, so it should be a minor amount of space used. Example:
 
 ```yml
 inputs:
-  action_ref:
-    description: "[INTERNAL USAGE ONLY] `github.action_ref`"
-    default: ${{ github.action_ref }}
-  action_repo:
-    description: "[INTERNAL USAGE ONLY] `github.action_repository`"
-    default: ${{ github.action_repository }}
+  # Your action's inputs here
+  # ...
 
 runs:
   using: node24
   main: shim/shim.js
 ```
+
+Configure the action by adding a `shim/shim-config.yml`.
+
+## Configuration
+
+Configuration is done three different ways based on how you've set up
+the action.
+
+### Methods
+
+| Configuration Method   | Pass-through | Composite | Binary  |
+| ---------------------- | ------------ | --------- | ------- |
+| Github Actions inputs  | ✓           | ✓        | —      |
+| Environment variables  | ✓           | ✓        | ✓      |
+| YAML config file       | —           | —        | ✓      |
+
+### Fields
+
+| Field                  | Github Actions          | Environment Variable                   | YAML          |
+|------------------------|-------------------------|----------------------------------------|---------------|
+| CacheDirectory         | —                      | `ACTION_GO_SHIM_CACHE_DIR`             | —            |
+| GithubToken            | `github_token`          | `GH_TOKEN`                             | —            |
+| GithubActionRef        | `action_ref`            | `GITHUB_ACTION_REF`                    | `action_ref`  |
+| GithubActionRepository | `action_repo`           | `GITHUB_ACTION_REPOSITORY`             | `action_repo` |
+| Pattern                | `pattern`               | —                                     | `pattern`     |
+| ValidateAttestations   | `validate_attestations` | `ACTION_GO_SHIM_VALIDATE_ATTESTATIONS` | —            |
 
 ## How it Works
 
@@ -69,11 +106,6 @@ a direct tag match (e.g., `@v1.1.1`) or looking up the best match (`v1`
 find the **greatest** semantic version that has the same commit.
 Branches cannot have Github Releases, so they are converted to a commit
 and looked up the same way.
-
-## Local Development
-
-**TODO**: This section will address how to develop this action and
-consuming actions locally, also with a stencil module for creating one.
 
 ## License
 

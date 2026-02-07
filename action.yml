@@ -3,11 +3,6 @@ description: Run Github Actions from Github releases
 author: Jared Allard <@jaredallard>
 
 inputs:
-  github_token:
-    description: >
-      Token to use for downloading the release (default: `github.token`)
-    default: ${{ github.token }}
-
   action_ref:
     description: >
       When running in a composite action mode, the ref (after '@')
@@ -17,24 +12,27 @@ inputs:
       When running in a composite action, the repo (before '@') value
       for the action we're acting as a shim for.
 
+  github_token:
+    description: >
+      Token to use when fetching releases/validating attestations (if
+      enabled)
+    default: "${{ github.token }}"
+
   validate_attestations:
     description: >
       When enabled, validate that the downloaded binary has a valid
       Github attestation.
-    default: "true"
 
   pattern:
     description: >
       Binary download pattern to use, supports Go Templates, with the
       following variables available:
       - {{ .GithubActionRepository }}
-      - {{ .GithubActionRef }}
       - {{ .RepoName }}
       - {{ .Tag }}
       - {{ .Ext }} (platform specific extension, empty if none)
       - {{ .GOOS }}
       - {{ .GOARCH }}
-    default: "{{ .REPO_NAME }}-{{ .GOOS }}-{{ .GOARCH }}{{ .Ext }}"
 
 runs:
   using: node24
