@@ -57,7 +57,7 @@ jobs:
         run: |-
           ./scripts/release.sh "$VERSION"
           git fetch origin --force --tags
-          git checkout "origin/refs/tags/$VERSION"
+          git checkout "refs/tags/$VERSION"
       - uses: actions/attest-build-provenance@v3
         with:
           subject-checksums: action-go-shim*
