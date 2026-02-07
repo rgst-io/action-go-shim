@@ -60,4 +60,4 @@ jobs:
           git checkout "refs/tags/$VERSION"
       - uses: actions/attest-build-provenance@v3
         with:
-          subject-checksums: "*"
+          subject-path: action-go-shim*
