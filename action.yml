@@ -1,0 +1,39 @@
+name: action-releases-shim
+description: Run Github Actions from Github releases
+author: Jared Allard <@jaredallard>
+
+inputs:
+  action_ref:
+    description: >
+      When running in a composite action mode, the ref (after '@')
+      value for the action we're acting as a shim for.
+  action_repo:
+    description: >
+      When running in a composite action, the repo (before '@') value
+      for the action we're acting as a shim for.
+
+  github_token:
+    description: >
+      Token to use when fetching releases/validating attestations (if
+      enabled)
+    default: "${{ github.token }}"
+
+  validate_attestations:
+    description: >
+      When enabled, validate that the downloaded binary has a valid
+      Github attestation.
+
+  pattern:
+    description: >
+      Binary download pattern to use, supports Go Templates, with the
+      following variables available:
+      - {{ .GithubActionRepository }}
+      - {{ .RepoName }}
+      - {{ .Tag }}
+      - {{ .Ext }} (platform specific extension, empty if none)
+      - {{ .GOOS }}
+      - {{ .GOARCH }}
+
+runs:
+  using: node24
+  main: shim.js
