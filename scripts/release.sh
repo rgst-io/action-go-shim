@@ -107,7 +107,7 @@ for tag in "${tags[@]}"; do
 	git push origin "${extra_args[@]}" "refs/tags/$tag"
 done
 
-gh release create --notes-from-tag "$patch_tag" -F CHANGELOG.md ./*
+gh release create "$patch_tag" -F CHANGELOG.md ./*
 popd >/dev/null
 
 echo "Cleaning up temporary repository"

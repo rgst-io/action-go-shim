@@ -19,9 +19,6 @@ builds:
       - amd64
       - arm64
       ## <<Stencil::Block(stencilExtraArch)>>
-      - "386"
-      - arm
-      - ppc64
       ## <</Stencil::Block>>
     goos:
       - linux
