@@ -29,8 +29,8 @@ github.com/jamespfennell/xz v0.1.2 h1:iCw5kScLfGCceOKgQaGuj5RilAAlV4iiwauYntak2o
 github.com/jamespfennell/xz v0.1.2/go.mod h1:DhpWvZY1xDkK/6BREFl3c3R/fZh7IBdYq2m7xh4uLl0=
 github.com/jaredallard/archives v1.0.2 h1:ZzxspwkXxARZKRcALFDMRfSK7q5jzT6yS0lC771yLgo=
 github.com/jaredallard/archives v1.0.2/go.mod h1:mGBixNa+pwxo5F4csd5hjNKbgN71xTgrQEE/fce45XM=
-github.com/jaredallard/cmdexec v1.3.0 h1:hn+N8gQJUm2j9kUwxA3db9Tl98+ebEOT/PeHWw/HjhM=
-github.com/jaredallard/cmdexec v1.3.0/go.mod h1:vqXk8cMGX2lEVVVlN8r8A/AvioVAysF09L9r1RpsgY4=
+github.com/jaredallard/cmdexec v1.4.0 h1:p0fwDjaXZrAQaB8GXvN/wA3sdq8Gg96IfmA0sOxIN6E=
+github.com/jaredallard/cmdexec v1.4.0/go.mod h1:vqXk8cMGX2lEVVVlN8r8A/AvioVAysF09L9r1RpsgY4=
 github.com/jaredallard/vcs v1.0.1 h1:/aUxMXjyhxdErR7gNClCK8qGF0wLUyzFcjeaVRCjDuc=
 github.com/jaredallard/vcs v1.0.1/go.mod h1:9AQM8MHA6yFtWmPeWRlPWpu0m/GJluVvixdSP4Ej00A=
 github.com/klauspost/compress v1.18.3 h1:9PJRvfbmTabkOX8moIpXPbMMbYN60bWImDDU7L+/6zw=
