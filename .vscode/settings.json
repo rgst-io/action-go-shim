@@ -11,6 +11,8 @@
 	"[yaml]": {
 		"editor.defaultFormatter": "redhat.vscode-yaml"
 	},
+
+	"mise.configureExtensionsAutomatically": true,
 	"mise.configureExtensionsAutomaticallyIncludeList": ["golang.go"],
 	"go.goroot": "${workspaceFolder}/.vscode/mise-tools/goRoot",
 	"go.alternateTools": {

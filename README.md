@@ -3,10 +3,6 @@
 Shim for downloading binaries from Github Releases for use in Github
 Actions. Specifically designed for Golang actions.
 
-> [!NOTE]
-> This is still a PoC, namely the composite action referenced has not
-> yet been implemented.
-
 ## Usage
 
 There are three methods of using this action.
