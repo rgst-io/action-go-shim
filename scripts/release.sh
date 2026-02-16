@@ -55,11 +55,10 @@ rm -f "COMMIT"
 
 echo "Releasing $patch_tag ($major_tag/$minor_tag)"
 
-echo " -> Generating CHANGELOG.md ($current_commit..$last_release_commit)"
-git-cliff "$current_commit..$last_release_commit" -o CHANGELOG.md
-sed -i.bak 's/## \[unreleased\]/## \['"$patch"'\]/' CHANGELOG.md
-rm -f CHANGELOG.md.bak
+echo " -> Generating CHANGELOG.md ($last_release_commit..$current_commit)"
+git-cliff "$last_release_commit..$current_commit" -o CHANGELOG.md -t "$patch_tag"
 
+echo " -> Creating release binaries"
 git tag "$patch_tag"
 goreleaser --release-notes CHANGELOG.md --clean --skip publish,announce
 git tag -d "$patch_tag"
