@@ -42,9 +42,26 @@ major_tag="v$major"
 minor_tag="v$minor"
 patch_tag="v$patch"
 
+LAST_RELEASE="${LAST_RELEASE:-$(gh release list --limit 1 --json tagName --jq '.[].tagName')}"
+if [[ -z "$LAST_RELEASE" ]]; then
+	echo "Error: Failed to detect last release, please set LAST_RELEASE" >&2
+	exit 1
+fi
+
+echo "Detecting last release commit ($LAST_RELEASE)..."
+gh release download "$LAST_RELEASE" --pattern COMMIT
+last_release_commit=$(cat "COMMIT")
+rm -f "COMMIT"
+
 echo "Releasing $patch_tag ($major_tag/$minor_tag)"
+
+echo " -> Generating CHANGELOG.md ($current_commit..$last_release_commit)"
+git-cliff "$current_commit..$last_release_commit" -o CHANGELOG.md
+sed -i.bak 's/## \[unreleased\]/## \['"$patch"'\]/' CHANGELOG.md
+rm -f CHANGELOG.md.bak
+
 git tag "$patch_tag"
-goreleaser --release-notes CHANGELOG.md --clean --snapshot
+goreleaser --release-notes CHANGELOG.md --clean --skip publish,announce
 git tag -d "$patch_tag"
 
 echo " -> Creating shim release with binaries"
@@ -89,7 +106,7 @@ for tag in "${tags[@]}"; do
 	git push origin "${extra_args[@]}" "refs/tags/$tag"
 done
 
-gh release create --notes-from-tag "$patch_tag" ./*
+gh release create --notes-from-tag "$patch_tag" -F CHANGELOG.md ./*
 popd >/dev/null
 
 echo "Cleaning up temporary repository"

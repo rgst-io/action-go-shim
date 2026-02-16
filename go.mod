@@ -21,10 +21,10 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
 	github.com/jamespfennell/xz v0.1.2 // indirect
 	github.com/jaredallard/archives v1.0.2 // indirect
-	github.com/klauspost/compress v1.18.3 // indirect
+	github.com/klauspost/compress v1.18.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/ulikunitz/xz v0.5.15 // indirect
-	gitlab.com/gitlab-org/api/client-go v1.28.1 // indirect
-	golang.org/x/oauth2 v0.34.0 // indirect
+	gitlab.com/gitlab-org/api/client-go v1.34.0 // indirect
+	golang.org/x/oauth2 v0.35.0 // indirect
 	golang.org/x/time v0.14.0 // indirect
 )
