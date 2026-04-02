@@ -11,22 +11,15 @@ builds:
     ldflags:
       - -s
       - -w
-      ## <<Stencil::Block(stencilLdflags)>>
-      ## <</Stencil::Block>>
     env:
       - CGO_ENABLED=0
     goarch:
       - amd64
       - arm64
-      ## <<Stencil::Block(stencilExtraArch)>>
-      ## <</Stencil::Block>>
     goos:
       - linux
       - darwin
       - windows
-      ## <<Stencil::Block(stencilExtraOS)>>
-
-      ## <</Stencil::Block>>
     ignore:
       - goos: windows
         goarch: arm
