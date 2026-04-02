@@ -17,11 +17,11 @@ import (
 	"text/template"
 
 	"github.com/blang/semver/v4"
-	"github.com/jaredallard/cmdexec"
-	"github.com/jaredallard/vcs/git"
-	"github.com/jaredallard/vcs/releases"
-	"github.com/jaredallard/vcs/resolver"
 	"github.com/sethvargo/go-githubactions"
+	"go.rgst.io/jaredallard/cmdexec/v2"
+	"go.rgst.io/jaredallard/vcs/v2/git"
+	"go.rgst.io/jaredallard/vcs/v2/releases"
+	"go.rgst.io/jaredallard/vcs/v2/resolver"
 )
 
 // ghServerURL is the base for Github.
