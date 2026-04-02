@@ -58,6 +58,6 @@ jobs:
           ./scripts/release.sh "$VERSION"
           git fetch origin --force --tags
           git checkout "refs/tags/$VERSION"
-      - uses: actions/attest-build-provenance@v3
+      - uses: actions/attest-build-provenance@v4
         with:
           subject-path: action-go-shim*
