@@ -33,6 +33,8 @@ github.com/jaredallard/archives v1.0.2 h1:ZzxspwkXxARZKRcALFDMRfSK7q5jzT6yS0lC77
 github.com/jaredallard/archives v1.0.2/go.mod h1:mGBixNa+pwxo5F4csd5hjNKbgN71xTgrQEE/fce45XM=
 github.com/jaredallard/cmdexec v1.4.0 h1:p0fwDjaXZrAQaB8GXvN/wA3sdq8Gg96IfmA0sOxIN6E=
 github.com/jaredallard/cmdexec v1.4.0/go.mod h1:vqXk8cMGX2lEVVVlN8r8A/AvioVAysF09L9r1RpsgY4=
+github.com/jaredallard/cmdexec v1.4.1 h1:mU0ZM1N3yk3cKQPfe183S3PtnGjvYHGroSzjwzq3zIQ=
+github.com/jaredallard/cmdexec v1.4.1/go.mod h1:vqXk8cMGX2lEVVVlN8r8A/AvioVAysF09L9r1RpsgY4=
 github.com/jaredallard/vcs v1.0.1 h1:/aUxMXjyhxdErR7gNClCK8qGF0wLUyzFcjeaVRCjDuc=
 github.com/jaredallard/vcs v1.0.1/go.mod h1:9AQM8MHA6yFtWmPeWRlPWpu0m/GJluVvixdSP4Ej00A=
 github.com/klauspost/compress v1.18.4 h1:RPhnKRAQ4Fh8zU2FY/6ZFDwTVTxgJ/EMydqSTzE9a2c=
