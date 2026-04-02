@@ -197,17 +197,17 @@ func downloadBinary(ctx context.Context, cfg *Config, tag string) (string, error
 	if err != nil {
 		return "", fmt.Errorf("failed to download repo %s release %q: %w", cfg.GithubActionRepository, tag, err)
 	}
-	defer contents.Close() //nolint:errcheck // Why: Best effort
+	defer contents.Close()
 
-	if err := os.MkdirAll(filepath.Dir(dlPath), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dlPath), 0o700); err != nil {
 		return "", fmt.Errorf("failed to ensure cache dir exists: %w", err)
 	}
 
-	f, err := os.Create(dlPath)
+	f, err := os.Create(dlPath) //nolint:gosec // Why: By design
 	if err != nil {
 		return "", fmt.Errorf("failed to create cache file: %w", err)
 	}
-	defer f.Close() //nolint:errcheck // Why: Best effort
+	defer f.Close()
 
 	if _, err := io.Copy(f, contents); err != nil {
 		return "", fmt.Errorf("failed to download release: %w", err)
@@ -245,8 +245,7 @@ func getBinaryName(cfg *Config, tag string) (string, error) {
 	}
 
 	var ext string
-	switch runtime.GOOS {
-	case "windows":
+	if runtime.GOOS == "windows" {
 		ext = ".ext"
 	}
 

@@ -35,11 +35,11 @@ import (
 
 // ghServerURL is the base for Github.
 var ghServerURL = func() string {
-	srvUrl := os.Getenv("GITHUB_SERVER_URL")
-	if srvUrl == "" {
-		srvUrl = "https://github.com"
+	srvURL := os.Getenv("GITHUB_SERVER_URL")
+	if srvURL == "" {
+		srvURL = "https://github.com"
 	}
-	return strings.TrimSuffix(srvUrl, "/") + "/"
+	return strings.TrimSuffix(srvURL, "/") + "/"
 }()
 
 // Config are the options for this action, sourced from the action.yml.
@@ -64,6 +64,8 @@ type Config struct {
 
 	// ValidateAttestations enables validating downloaded assets with
 	// Github's attestations. Requires the Github CLI to be available.
+	//
+	//nolint:lll // Why: Struct tags be struct tags.
 	ValidateAttestations *bool `githubActions:"validate_attestations" githubActionsDefault:"true" env:"ACTION_GO_SHIM_VALIDATE_ATTESTATIONS" yaml:"validate_attestations"`
 }
 
@@ -107,6 +109,8 @@ func parseShimConfig[T any](t *T) error {
 	var confFilePath string
 	for _, cfp := range confFilePaths {
 		var err error
+
+		//nolint:gosec // Why: By design
 		if f, err = os.Open(cfp); err != nil {
 			continue
 		}
@@ -166,6 +170,7 @@ func ParseAs[T any]() (*T, error) {
 		}
 
 		if fv.CanSet() {
+			//nolint:exhaustive // Why: Only values needed to support.
 			switch fv.Kind() {
 			case reflect.String:
 				fv.SetString(actV)
