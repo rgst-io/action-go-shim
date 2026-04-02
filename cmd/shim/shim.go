@@ -19,19 +19,11 @@ import (
 	"github.com/blang/semver/v4"
 	"github.com/sethvargo/go-githubactions"
 	"go.rgst.io/jaredallard/cmdexec/v2"
+	"go.rgst.io/jaredallard/vcs/v2"
 	"go.rgst.io/jaredallard/vcs/v2/git"
 	"go.rgst.io/jaredallard/vcs/v2/releases"
 	"go.rgst.io/jaredallard/vcs/v2/resolver"
 )
-
-// ghServerURL is the base for Github.
-var ghServerURL = func() string {
-	srvUrl := os.Getenv("GITHUB_SERVER_URL")
-	if srvUrl == "" {
-		srvUrl = "https://github.com"
-	}
-	return strings.TrimSuffix(srvUrl, "/") + "/"
-}()
 
 // log is a wrapper to [fmt.Printf] that handles adding a newline if not
 // already added.
@@ -50,8 +42,13 @@ func log(format string, a ...any) {
 //
 // Tags must be semver and are normalized ("v" trimmed from prefix)
 func getTagFromRev(ctx context.Context, cfg *Config) (string, error) {
+	actionRepositoryURL, err := cfg.GetActionRepositoryURL()
+	if err != nil {
+		return "", err
+	}
+
 	if cfg.GithubActionRef == "latest" {
-		v, err := resolver.NewResolver().Resolve(ctx, ghServerURL+cfg.GithubActionRepository, &resolver.Criteria{
+		v, err := resolver.NewResolver().Resolve(ctx, actionRepositoryURL.String(), &resolver.Criteria{
 			Constraint: "*",
 		})
 		if err != nil {
@@ -67,7 +64,7 @@ func getTagFromRev(ctx context.Context, cfg *Config) (string, error) {
 		return "v" + sv.String(), nil
 	}
 
-	remotes, err := git.ListRemote(ctx, ghServerURL+cfg.GithubActionRepository)
+	remotes, err := git.ListRemote(ctx, actionRepositoryURL.String())
 	if err != nil {
 		return "", fmt.Errorf("failed to list remotes: %w", err)
 	}
@@ -120,6 +117,11 @@ func getTagFromRev(ctx context.Context, cfg *Config) (string, error) {
 // getBinaryPath gets a path suitable for storing (and caching) the
 // specific tag.
 func getBinaryPath(cfg *Config, tag string) (string, error) {
+	actionRepository, err := cfg.GetActionRepository()
+	if err != nil {
+		return "", err
+	}
+
 	cacheDir := cfg.CacheDirectory
 	if cacheDir == "" {
 		var err error
@@ -132,18 +134,23 @@ func getBinaryPath(cfg *Config, tag string) (string, error) {
 
 	dir := filepath.Join(
 		cacheDir,
-		strings.ReplaceAll(cfg.GithubActionRepository, "/", "--"),
+		strings.ReplaceAll(actionRepository, "/", "--"),
 		tag,
 	)
 	return filepath.Join(
 		dir,
-		filepath.Base(cfg.GithubActionRepository)+"-"+runtime.GOOS+"-"+runtime.GOARCH,
+		filepath.Base(actionRepository)+"-"+runtime.GOOS+"-"+runtime.GOARCH,
 	), nil
 }
 
 // downloadBinary downloads the latest binary for the current runtime
 // environment.
 func downloadBinary(ctx context.Context, cfg *Config, tag string) (string, error) {
+	actionRepositoryURL, err := cfg.GetActionRepositoryURL()
+	if err != nil {
+		return "", err
+	}
+
 	dlPath, err := getBinaryPath(cfg, tag)
 	if err != nil {
 		return "", fmt.Errorf("failed to get path for caching: %w", err)
@@ -157,15 +164,22 @@ func downloadBinary(ctx context.Context, cfg *Config, tag string) (string, error
 		return "", err
 	}
 
+	vcsp, err := vcs.ProviderFromURL(actionRepositoryURL.String(), nil)
+	if err != nil {
+		githubactions.Warningf("Failed to determine VCS for URL %q, falling back to Github",
+			actionRepositoryURL.String())
+		vcsp = vcs.ProviderGithub
+	}
+
 	contents, _, err := releases.Fetch(ctx, &releases.FetchOptions{
-		RepoURL:   ghServerURL + cfg.GithubActionRepository,
+		RepoURL:   actionRepositoryURL.String(),
 		Tag:       tag,
 		AssetName: assetName,
 	})
 	if err != nil {
 		return "", fmt.Errorf("failed to download repo %s release %q: %w", cfg.GithubActionRepository, tag, err)
 	}
-	defer contents.Close()
+	defer contents.Close() //nolint:errcheck // Why: Best effort
 
 	if err := os.MkdirAll(filepath.Dir(dlPath), 0o755); err != nil {
 		return "", fmt.Errorf("failed to ensure cache dir exists: %w", err)
@@ -175,7 +189,7 @@ func downloadBinary(ctx context.Context, cfg *Config, tag string) (string, error
 	if err != nil {
 		return "", fmt.Errorf("failed to create cache file: %w", err)
 	}
-	defer f.Close()
+	defer f.Close() //nolint:errcheck // Why: Best effort
 
 	if _, err := io.Copy(f, contents); err != nil {
 		return "", fmt.Errorf("failed to download release: %w", err)
@@ -185,7 +199,7 @@ func downloadBinary(ctx context.Context, cfg *Config, tag string) (string, error
 		return "", fmt.Errorf("failed to make downloaded file executable: %w", err)
 	}
 
-	if cfg.ValidateAttestations != nil && *cfg.ValidateAttestations {
+	if vcsp == vcs.ProviderGithub && cfg.ValidateAttestations != nil && *cfg.ValidateAttestations {
 		log("Validating binary's attestation...")
 		cmd := cmdexec.Command("gh", "attestation", "verify", dlPath, "--repo", cfg.GithubActionRepository)
 		cmd.SetEnviron([]string{"GH_TOKEN=" + cfg.GithubToken})

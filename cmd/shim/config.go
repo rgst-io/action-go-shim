@@ -2,16 +2,27 @@ package main
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"dario.cat/mergo"
 	"github.com/caarlos0/env/v11"
 	"github.com/sethvargo/go-githubactions"
 	"go.yaml.in/yaml/v4"
 )
+
+// ghServerURL is the base for Github.
+var ghServerURL = func() string {
+	srvUrl := os.Getenv("GITHUB_SERVER_URL")
+	if srvUrl == "" {
+		srvUrl = "https://github.com"
+	}
+	return strings.TrimSuffix(srvUrl, "/") + "/"
+}()
 
 // Config are the options for this action, sourced from the action.yml.
 type Config struct {
@@ -38,6 +49,33 @@ type Config struct {
 	ValidateAttestations *bool `githubActions:"validate_attestations" githubActionsDefault:"true" env:"ACTION_GO_SHIM_VALIDATE_ATTESTATIONS" yaml:"validate_attestations"`
 }
 
+// GetActionRepositoryURL parses [Config.GithubActionRepository] to
+// determine where the repository is located.
+func (c *Config) GetActionRepositoryURL() (*url.URL, error) {
+	u, err := url.Parse(c.GithubActionRepository)
+	if err != nil {
+		// Fallback to generating a URL from heuristics.
+		generatedURL := ghServerURL + c.GithubActionRepository
+		u, err = url.Parse(generatedURL)
+		if err != nil {
+			return nil, err
+		}
+		return u, nil
+	}
+	return u, nil
+}
+
+// GetActionRepository parses [Config.GithubActionRepository] to only
+// return a non-URL repository.
+func (c *Config) GetActionRepository() (string, error) {
+	u, err := c.GetActionRepositoryURL()
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimPrefix(u.Path, "/"), nil
+}
+
 // parseShimConfig attempts to parse a shim config in the current
 // action's path.
 func parseShimConfig[T any](t *T) error {
@@ -61,7 +99,7 @@ func parseShimConfig[T any](t *T) error {
 	if f == nil {
 		return fmt.Errorf("failed to open any shim config files, tried %v", confFilePaths)
 	}
-	defer f.Close()
+	defer f.Close() //nolint:errcheck // Why: Best effort
 
 	loader, err := yaml.NewLoader(f)
 	if err != nil {
