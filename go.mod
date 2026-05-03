@@ -5,7 +5,7 @@ go 1.26
 require (
 	dario.cat/mergo v1.0.2
 	github.com/blang/semver/v4 v4.0.0
-	github.com/caarlos0/env/v11 v11.4.0
+	github.com/caarlos0/env/v11 v11.4.1
 	github.com/sethvargo/go-githubactions v1.3.2
 	go.rgst.io/jaredallard/cmdexec/v2 v2.0.0
 	go.rgst.io/jaredallard/vcs/v2 v2.1.0
