@@ -2,7 +2,7 @@
 [tools]
 dprint = "latest"
 golang = "1.26.1"
-golangci-lint = "2.11"
+golangci-lint = "2.12.2"
 goreleaser = "2.15"
 gotestsum = "1.13"
 "go:golang.org/x/tools/cmd/goimports" = "latest"
